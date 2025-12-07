@@ -46,3 +46,10 @@ class SavingAccount(Account):
 
     def deposit(self, amount: float) -> bool:
         """Deposit a positive amount into the savings account."""
+
+def closeEvent(self, event) -> None:
+    """Save all user data when closing the application."""
+    self.save_users_data()
+    event.accept()
+
+
