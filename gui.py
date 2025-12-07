@@ -1,17 +1,8 @@
-import csv
-import os
-from PyQt6.QtWidgets import (
-    QWidget, QLabel, QLineEdit, QPushButton,
-    QVBoxLayout, QHBoxLayout, QMessageBox, QStackedWidget, QInputDialog, QListWidget
-)
-from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QFont
-from accounts import Account, SavingAccount
-
-
 class AccountGUI(QWidget):
+    """GUI for managing bank accounts with login, signup, deposit, and withdrawal."""
 
     def __init__(self) -> None:
+        """Initialize the main GUI and screens."""
         super().__init__()
         self.setWindowTitle("Bank Account Manager")
         self.setFixedSize(300, 400)
@@ -31,6 +22,7 @@ class AccountGUI(QWidget):
         self.setLayout(layout)
 
     def load_users_data(self) -> None:
+        """Load users from CSV file into memory."""
         if os.path.exists(self.filename):
             try:
                 with open(self.filename, mode="r", newline="") as file:
@@ -47,6 +39,7 @@ class AccountGUI(QWidget):
                 self.show_error(f"Error loading users data: {e}")
 
     def build_login_screen(self) -> QWidget:
+        """Create the login screen widget."""
         screen = QWidget()
         layout = QVBoxLayout()
         self.username_input = QLineEdit()
@@ -66,6 +59,7 @@ class AccountGUI(QWidget):
         return screen
 
     def build_signup_screen(self) -> QWidget:
+        """Create the signup screen widget."""
         screen = QWidget()
         layout = QVBoxLayout()
         self.new_username_input = QLineEdit()
@@ -85,6 +79,7 @@ class AccountGUI(QWidget):
         return screen
 
     def build_account_summary_screen(self) -> QWidget:
+        """Create the account summary screen widget."""
         screen = QWidget()
         layout = QVBoxLayout()
         self.balance_label = QLabel("Balance: $0.00")
@@ -109,6 +104,7 @@ class AccountGUI(QWidget):
         return screen
 
     def login(self) -> None:
+        """Authenticate user and open account summary screen."""
         username = self.username_input.text()
         password = self.password_input.text()
 
@@ -125,9 +121,11 @@ class AccountGUI(QWidget):
             self.show_error("Invalid username or password.")
 
     def go_to_signup(self) -> None:
+        """Switch to the signup screen."""
         self.stack.setCurrentWidget(self.signup_screen)
 
     def create_account(self) -> None:
+        """Create a new account from signup inputs."""
         username = self.new_username_input.text()
         password = self.new_password_input.text()
         try:
@@ -146,11 +144,11 @@ class AccountGUI(QWidget):
 
         self.users_data[username] = {"password": password, "acc_type": "Account", "balance": balance}
         self.save_users_data()
-
         self.show_message("Account created successfully! Please log in.")
         self.stack.setCurrentWidget(self.login_screen)
 
     def save_users_data(self) -> None:
+        """Save all user data to CSV file."""
         try:
             with open(self.filename, mode="w", newline="") as file:
                 writer = csv.writer(file)
@@ -160,6 +158,7 @@ class AccountGUI(QWidget):
             self.show_error(f"Error saving user data: {e}")
 
     def deposit(self) -> None:
+        """Prompt for deposit amount and update account balance."""
         amount = self.prompt_for_amount("Deposit Amount")
         if amount is None:
             return
@@ -170,10 +169,10 @@ class AccountGUI(QWidget):
             self.show_error("Invalid deposit amount.")
 
     def withdraw(self) -> None:
+        """Prompt for withdrawal amount and update account balance."""
         amount = self.prompt_for_amount("Withdrawal Amount")
         if amount is None:
             return
-
         if self.account.withdraw(amount):
             self.balance_label.setText(f"Balance: ${self.account.get_balance():.2f}")
             self.transaction_log.addItem(f"Withdrew: ${amount:.2f}")
@@ -181,6 +180,7 @@ class AccountGUI(QWidget):
             self.show_error("Exceeds Balance.")
 
     def prompt_for_amount(self, action: str) -> float:
+        """Prompt the user for amount and return it."""
         text, ok = QInputDialog.getText(self, action, f"Enter {action.lower()}:")
         if ok:
             try:
@@ -191,10 +191,12 @@ class AccountGUI(QWidget):
         return None
 
     def logout(self) -> None:
+        """Log out current user and return to login screen."""
         self.account = None
         self.stack.setCurrentWidget(self.login_screen)
 
     def show_error(self, message: str) -> None:
+        """Display an error message box."""
         msg = QMessageBox()
         msg.setWindowTitle("Error")
         msg.setText(message)
@@ -202,6 +204,7 @@ class AccountGUI(QWidget):
         msg.exec()
 
     def show_message(self, message: str) -> None:
+        """Display an informational message box."""
         msg = QMessageBox()
         msg.setWindowTitle("Message")
         msg.setText(message)
