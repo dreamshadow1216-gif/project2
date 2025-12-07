@@ -157,27 +157,34 @@ class AccountGUI(QWidget):
         except Exception as e:
             self.show_error(f"Error saving user data: {e}")
 
-    def deposit(self) -> None:
-        """Prompt for deposit amount and update account balance."""
-        amount = self.prompt_for_amount("Deposit Amount")
-        if amount is None:
-            return
-        if self.account.deposit(amount):
-            self.balance_label.setText(f"Balance: ${self.account.get_balance():.2f}")
-            self.transaction_log.addItem(f"Deposited: ${amount:.2f}")
-        else:
-            self.show_error("Invalid deposit amount.")
+def deposit(self) -> None:
+    """Prompt for deposit amount and update account balance."""
+    amount = self.prompt_for_amount("Deposit Amount")
+    if amount is None:
+        return
+    if self.account.deposit(amount):
+        self.balance_label.setText(f"Balance: ${self.account.get_balance():.2f}")
+        self.transaction_log.addItem(f"Deposited: ${amount:.2f}")
+        # Save updated balance
+        self.users_data[self.account.get_name()]["balance"] = self.account.get_balance()
+        self.save_users_data()
+    else:
+        self.show_error("Invalid deposit amount.")
 
-    def withdraw(self) -> None:
-        """Prompt for withdrawal amount and update account balance."""
-        amount = self.prompt_for_amount("Withdrawal Amount")
-        if amount is None:
-            return
-        if self.account.withdraw(amount):
-            self.balance_label.setText(f"Balance: ${self.account.get_balance():.2f}")
-            self.transaction_log.addItem(f"Withdrew: ${amount:.2f}")
-        else:
-            self.show_error("Exceeds Balance.")
+def withdraw(self) -> None:
+    """Prompt for withdrawal amount and update account balance."""
+    amount = self.prompt_for_amount("Withdrawal Amount")
+    if amount is None:
+        return
+    if self.account.withdraw(amount):
+        self.balance_label.setText(f"Balance: ${self.account.get_balance():.2f}")
+        self.transaction_log.addItem(f"Withdrew: ${amount:.2f}")
+        # Save updated balance
+        self.users_data[self.account.get_name()]["balance"] = self.account.get_balance()
+        self.save_users_data()
+    else:
+        self.show_error("Exceeds Balance.")
+
 
     def prompt_for_amount(self, action: str) -> float:
         """Prompt the user for amount and return it."""
@@ -210,3 +217,4 @@ class AccountGUI(QWidget):
         msg.setText(message)
         msg.setIcon(QMessageBox.Icon.Information)
         msg.exec()
+
