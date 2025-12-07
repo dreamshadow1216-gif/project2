@@ -2,54 +2,48 @@ class Account:
     """Basic bank account."""
 
     def __init__(self, username: str, balance: float = 0.0) -> None:
-        """Initialize account with username and optional balance."""
+        """Set username and starting balance."""
         self.username = username
         self.balance = balance
 
     def get_name(self) -> str:
-        """Return the account username."""
+        """Return the username."""
         return self.username
 
     def get_balance(self) -> float:
-        """Return the current account balance."""
+        """Return the current balance."""
         return self.balance
 
     def set_balance(self, balance: float) -> None:
-        """Set the account balance."""
+        """Set a new balance."""
         self.balance = balance
 
     def deposit(self, amount: float) -> bool:
-        """Deposit a positive amount into the account."""
+        """Add money to the account if amount is positive."""
         if amount > 0:
             self.balance += amount
             return True
         return False
 
     def withdraw(self, amount: float) -> bool:
-        """Withdraw a positive amount if balance exists."""
+        """Take money from the account if enough balance."""
         if amount > 0 and self.balance >= amount:
             self.balance -= amount
             return True
         return False
 
     def __str__(self) -> str:
-        """Return a string of the account."""
+        """Return account info as a string."""
         return f"Account: {self.username}, Balance: ${self.balance:.2f}"
 
 
 class SavingAccount(Account):
-    """Savings account with same logic."""
+    """Savings account (like Account)."""
 
     def __init__(self, username: str, balance: float = 0.0) -> None:
-        """Initialize savings account with username and optional balance."""
+        """Set username and starting balance."""
         super().__init__(username, balance)
 
     def deposit(self, amount: float) -> bool:
-        """Deposit a positive amount into the savings account."""
-
-def closeEvent(self, event) -> None:
-    """Save all user data when closing the application."""
-    self.save_users_data()
-    event.accept()
-
-
+        """Add money to savings account."""
+        return super().deposit(amount)
